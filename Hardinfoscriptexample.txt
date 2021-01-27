@@ -1,0 +1,64 @@
+ want to display Memory usage, Disk Usage and CPU Load in the following format:
+
+Memory Usage: 33/512MB (6%)    
+Disk usage: 4.2/20GB (23%) 
+CPU Load: 0.01
+
+How do I do that?
+
+
+
+
+
+
+#!/bin/sh
+free -m | awk 'NR==2{printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }'
+df -h | awk '$NF=="/"{printf "Disk Usage: %d/%dGB (%s)\n", $3,$2,$5}'
+top -bn1 | grep load | awk '{printf "CPU Load: %.2f\n", $(NF-2)}' 
+
+-------------------------------------------------------------------------------------
+
+https://lwn.net/Articles/387202/
+
+One-stop performance analysis using atop
+
+
+
+top -bn1 | grep "Cpu(s)" | \
+           sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | \
+           awk '{print 100 - $1"%"}'
+
+
+
+
+Use AWK to Parse Output from Top
+
+top -bn1 | awk '/Mem/ { mem = "Memory in Use: " $5 / $3 * 100 "%" };
+                /Cpu/ { cpu = "CPU in Use: " 100 - $8 "%" };
+                END   { print mem ", " cpu }'
+
+This will use top's batch mode to print statistics once, which you can then parse any way you like with awk. For example, the code above yielded this in my test:
+
+    Memory in Use: 93.866%, CPU in Use: 1.7%
+
+Obviously, your output will vary. You can also adjust the output format if you need more (or less) information.
+
+
+$ top -bn1 | sed -rn '3s/[^0-9]* ([0-9\.]+) .*/\1/p;4s/.*,  ([0-9]+) .*/\1/p' | tr '\n' ' '
+10.4 3787340
+
+Or to get percentages, you can do
+
+$ top -bn1 | \
+> sed -rn '3s/[^0-9]* ([0-9\.]+) .*/\1/p;4s/[^0-9]*([0-9]+)[^0-9]+([0-9]+) .*/\1 \2/p' | \
+> { read cpu; read tot used; echo $cpu $(( 100*used/tot )); }
+10.3 94
+
+I'm sure there are more elegant solutions though.
+
+------------------------------------------------------------------------------------------
+How to check CPU info on Linux
+
+http://ask.xmodulo.com/check-cpu-info-linux.html
+
+

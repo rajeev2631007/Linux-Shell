@@ -1,0 +1,497 @@
+#!/bin/bash
+ 
+# clear the screen
+tput clear
+ 
+# Move cursor to screen location X,Y (top left is 0,0)
+tput cup 3 15
+ 
+# Set a foreground colour using ANSI escape
+tput setaf 3
+echo "XYX Corp LTD."
+tput sgr0
+ 
+tput cup 5 17
+# Set reverse video mode
+tput rev
+echo "M A I N - M E N U"
+tput sgr0
+ 
+tput cup 7 15
+echo "1. User Management"
+ 
+tput cup 8 15
+echo "2. Service Management"
+ 
+tput cup 9 15
+echo "3. Process Management"
+ 
+tput cup 10 15
+echo "4. Backup"
+ 
+# Set bold mode 
+tput bold
+tput cup 12 15
+read -p "Enter your choice [1-4] " choice
+ 
+tput clear
+tput sgr0
+tput rc
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Backtitle here"
+TITLE="Title here"
+MENU="Choose one of the following options:"
+
+OPTIONS=(1 "Option 1"
+         2 "Option 2"
+         3 "Option 3")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+            echo "You chose Option 1"
+            ;;
+        2)
+            echo "You chose Option 2"
+            ;;
+        3)
+            echo "You chose Option 3"
+            ;;
+esac
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+I have used Zenity, which seems always there in Ubuntu, works very well and has many capabilities. This is a sketch of a possible menu:
+
+#! /bin/bash
+
+selection=$(zenity --list "Option 1" "Option 2" "Option 3" --column="" --text="Text above column(s)" --title="My menu")
+
+case "$selection" in
+"Option 1")zenity --info --text="Do something here for No1";;
+"Option 2")zenity --info --text="Do something here for No2";;
+"Option 3")zenity --info --text="Do something here for No3";;
+esac
+------------------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+# "Two Words" Makes It Count As One Object, 
+# But If It Is A Single Word,You Don't Need The ""
+select choice in "Start Server" "Update Server" Exit
+do
+    case $REPLY in
+        1)
+            echo Start Server...
+
+        ;;
+        2)
+            echo Update Server...
+
+        ;;
+        3)
+            echo "Okay, Exiting..."
+            exit
+        ;;
+    esac
+    break #stops From Re-Looping After Chooseing
+
+done
+------------------------------------------------------------------------------------------------------------------------------------
+
+#!/bin/bash
+echo "select the operation ************  1)operation 1 2)operation 2 3)operation 3 4)operation 4 "
+
+read n
+case $n in
+    1) commands for opn 1;;
+    2) commands for opn 2;;
+    3) commands for opn 3;;
+    4) commands for  opn 4;;
+    *) invalid option;;
+esac
+----------------------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+# Bash Menu Script Example
+
+PS3='Please enter your choice: '
+options=("Option 1" "Option 2" "Option 3" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Option 1")
+            echo "you chose choice 1"
+            ;;
+        "Option 2")
+            echo "you chose choice 2"
+            ;;
+        "Option 3")
+            echo "you chose choice 3"
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo invalid option;;
+    esac
+done
+-------------------------------------------------------------------------------------------------------------------------------------------------
+title="Select example"
+prompt="Pick an option:"
+options=("A" "B" "C")
+
+echo "$title"
+PS3="$prompt "
+select opt in "${options[@]}" "Quit"; do 
+
+    case "$REPLY" in
+
+    1 ) echo "You picked $opt which is option $REPLY";;
+    2 ) echo "You picked $opt which is option $REPLY";;
+    3 ) echo "You picked $opt which is option $REPLY";;
+
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; break;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+
+done
+
+while opt=$(zenity --title="$title" --text="$prompt" --list \
+                   --column="Options" "${options[@]}"); do
+
+    case "$opt" in
+    "${options[0]}" ) zenity --info --text="You picked $opt, option 1";;
+    "${options[1]}" ) zenity --info --text="You picked $opt, option 2";;
+    "${options[2]}" ) zenity --info --text="You picked $opt, option 3";;
+    *) zenity --error --text="Invalid option. Try another one.";;
+    esac
+
+done
+-----------------------------------------------------------------------------------------------------------------------------------------------
+/tmp/x.sh
+1) columbia    3) challenger  5) atlantis    7) pathfinder
+2) endeavour   4) discovery   6) enterprise
+Enter the space shuttle name to get more information : 1
+columbia selected
+Enter the space shuttle name to get more information : 
+Combining the select and the case statement
+Another select loop example and decision making does with case..in..esac statement (selectshuttle.sh):
+
+#!/bin/bash
+# The default value for PS3 is set to #?.
+# Change it i.e. Set PS3 prompt
+PS3="Enter the space shuttle to get quick information : "
+ 
+# set shuttle list
+select shuttle in columbia endeavour challenger discovery atlantis enterprise pathfinder
+do
+	case $shuttle in
+		columbia)
+			echo "--------------"
+			echo "Space Shuttle Columbia was the first spaceworthy space shuttle in NASA's orbital fleet."
+			echo "--------------"
+			;;
+		endeavour)
+			echo "--------------"		
+			echo "Space Shuttle Endeavour is one of three currently operational orbiters in the Space Shuttle." 
+			echo "--------------"		
+			;;
+		challenger) 
+			echo "--------------"				
+		    echo "Space Shuttle Challenger was NASA's second Space Shuttle orbiter to be put into service."
+			echo "--------------"				    
+			;;		
+		discovery) 
+			echo "--------------"		
+			echo "Discovery became the third operational orbiter, and is now the oldest one in service."
+			echo "--------------"							
+			;;		
+		atlantis)
+			echo "--------------"		
+			echo "Atlantis was the fourth operational shuttle built."
+			echo "--------------"							
+			;;
+		enterprise)
+			echo "--------------"		
+			echo "Space Shuttle Enterprise was the first Space Shuttle orbiter."
+			echo "--------------"							
+			;;		
+		pathfinder)
+			echo "--------------"		
+			echo "Space Shuttle Orbiter Pathfinder is a Space Shuttle simulator made of steel and wood."
+			echo "--------------"							
+			;;
+		*)		
+			echo "Error: Please try again (select 1..7)!"
+			;;		
+	esac
+done
+-----------------------------------------------------------------------------------------------------------
+Sub Menu example
+#!/bin/bash
+
+function update_user 
+{
+ option=0
+ until [ "$option" = "3"]; do
+ echo "  1.) Update username"
+ echo "  2.) Update password"
+ echo "  3.) Return to menu"
+
+ echo -n "Enter choice: "
+ read option
+ echo ""
+ case $option in
+ 1 ) update_username; press_enter ;;
+ 2 ) update_password; press_enter ;;
+ 3 ) main_menu; press_enter ;;
+ 4 ) break ;;
+ * ) tput setf 3;echo "Please enter 1, 2 or 3";tput setf 3; 
+ esac
+#   }
+ done
+}
+
+function main_menu 
+{
+option=0
+until [ "$option" = "4" ]; do
+echo "  1.) Add user"
+echo "  2.) Remove user"
+echo "  3.) Update user"
+echo "  4.) Quit"
+
+echo -n "Enter choice: "
+read option
+echo ""
+case $option in
+    1 ) add_user ; press_enter ;;
+    2 ) remove_user ; press_enter ;;
+    3 ) update_user ; press_enter ;;
+    4 ) exit;;
+    * ) tput setf 4;echo "Please enter 1, 2, 3, or 4";tput setf 4; 
+esac
+done
+ }
+
+main_menu
+-----------------------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+submanual(){
+while :
+do
+echo "sub Menu:"
+echo -e "\t(x) Options 1"
+echo -e "\t(y) Options 1"
+echo -e "\t(e) Back"
+echo -n "Please enter your choice:"
+read c
+case $c in
+    "x"|"X")
+    # Options 1 and its commands
+    ;;
+    "y"|"Y")
+    # Options 2 and its commands
+    ;;
+    "e"|"E")
+    break
+    ;;
+        *)
+        echo "invalid answer, please try again"
+        ;;
+esac
+done
+}
+
+while :
+do
+echo "Main Menu:"
+echo -e "\t(a) More Menu Options "
+echo -e "\t(b) Exit"
+echo -n "Please enter your choice:"
+read choice
+case $choice in
+    "a"|"A")
+    submanual
+    ;;
+    "b"|"B")
+    exit
+    ;;
+        *)
+        echo "invalid answer, please try again"
+        ;;
+
+esac
+done
+------------------------------------------------------------------------------------------------------
+the basic menu
+
+A menu is an executable text file, a script, and we'll use the powerful bash (Bourne Again Shell) to harness the power of the Linux operating system. Bash is a command-line interpreter that can interpret computer language elements like  if . . .then . . .else  and while . . . do . . . done  and in fact enough to be a programming language in itself. For those familiar with DOS, bash has elements of the batch commands. Note that all Linux distros have bash, so these menus should work on all distros.
+Usually a menu is just a traffic agent directing the user to an application, but the menus discussed here are more powerful because they contain the applications (the programs) as well. Here is part of a menu to show what is involved. The parts in blue are execution commands whereas the rest is the menu proper. 
+ 
+#!/bin/bash 
+# simple menu to do various functions
+while [ answer != "0" ]  
+do 
+clear 
+echo "Select from the following functions" 
+echo"  0    exit" 
+echo"  1    set wacom pen" 
+echo"  2    remove System Volume Information folders" 
+echo"  3    EPSON printer clean head" 
+echo"  4    exit" 
+echo"  A    Backup E: zipped to G:" 
+read -p " ?" answer 
+    case $answer in 
+       0) break ;; 
+       1) echo "wacom setup" 
+       xsetwacom set stylus clickforce 15 
+       xsetwacom set stylus button3 1 
+       xsetwacom set stylus button2 3 
+       ;; 
+       2) rm -rf /disks/D/"System Volume Information" 
+       rm -rf/disks/E/"System Volume Information" 
+       rm -rf /disks/F/"System Volume Information" 
+       rm -rf /disks/G/"System Volume Information" 
+       ;; 
+       3) escputil -q --raw-device=/dev/usb/lp1 -i 
+       ;; 
+       4) break ;; 
+       A|a) echo "enter zip archive name (eyymmdd)" 
+       read name 
+       cd /disks/E/ 
+       zip -r /disks/G/$name.zip * 
+       cd ~/ 
+       ;; 
+       *) break ;; 
+   esac  
+   echo "press RETURN for menu" 
+   read key 
+done 
+exit 0
+
+Now, that looks like a whole lot of gobbledigook, but in your smart editor, it looks a whole lot better with all those colours. In other words, the editor (kedit) knows what the syntax of this script is. Here is how it works:
+
+The main loop while . . . do . . . done waits for an answer and dependent on that answer, branches out with the case ... in .... esac construct. There are break commands to break out of the while .. do loop and when done, the script exits with error code 0 (=OK), cleaning up the window. There is also a very simple dialogue that asks for part of a file name for a zip file. 
+The three examples are: 1= setting up the pen tablet,  2= removing folders,  3= a printer command to display remaining ink levels, A= a zip backup of our entire own work on drive E.
+
+As you can see, these commands extend the utility of your work, and allow anyone to do tricky things without any risk or advanced knowledge. Should you wish to know all details, ask the manual (man) for xsetwacom, rm, escputil and zip, but for understanding the menu, this is not necessary.
+
+The program reads as follows: while the answer is not 0, loop around, first clearing the screen, then printing (echo) the menu and waiting for a key stroke and enter/return. The operator could have typed a whole word, even a whole line, but we expect a single letter, which is stored in the string variable answer. 
+In case the $answer string is 0, 1 ,2 ,3 ,4 ,A or a, do what is in between ) and ;; and once done, go to esac (case spelled back to front). Here the operator is prompted to press the return key first before the screen is wiped and the menu re-displayed. The key (or word or line) is read to the key string which we don't use. The break command breaks out of the do-loop and goes to done.
+
+The purist will notice that the do loop can be set up to never finish: while true do ...  because a 0 answer is tested for in the case branch and breaks out anyway.
+
+In option A or a (A|a), the program briefs to enter the zip archive name, read to name. The program changes directory (cd) to the own work disk E and issues the zip command recursively (-r) for all folders, and output to the G drive with a filename $name just entered, followed by .zip file extension. Once done, it thoughtfully changes the directory back to my_home ~/. 
+* is the code for anything not a letter or a digit, which in our case breaks out of the loop.
+
+One could not make a menu simpler than this, could we? Save it to ~/ with filename submenu1, because most likely you will need a main menu as well in due course.
+
+activating the menu
+
+Your text file becomes a script by its first line #!/bin/bash which says that the program bash in /bin should execute this script, and that is the bash shell. However, the script must also be made executable, and this is most easily done with the Xandros File Manager (XFM). 
+Right-click on ~/submenu1 and select properties. It tells you that this is a Bourne script text executable. Click on the permissions tab and tick the execute checkboxes for owner, group and others. Here you specify who can use and modify (write) this menu. In the group drop-down list you can indeed be very specific. Click OK. The script is now executable.
+At this point you can double-click on the submenu1 file, and it will run the menu. Now we need to put it in the menu tree.
+
+For Xandros this means using the menu editor: launch> applications> system> menu editor. 
+Navigate to the menu folder where you want your menu placed. Click File> new item and enter the specifics. The important thing is command: ~/submenu1 and to tick 'Run in terminal' which turns the console on. The path is not important here. 
+As a refinement, we'll try to find a suitable icon: click on the icon and find a suitable one, like alevt. Exit the menu editor to activate the changes.
+
+Once the icon is in the menu tree, you can drag it onto the desktop. If you install a main menu, you may need to change the menu tree and icon on the desktop. 
+the main menu
+
+Once you find a single menu becoming cumbersome, you may wish to hang the submenus off a main menu, and then the possibilities become unlimited, so here it is.
+#!/bin/bash 
+# main menu 
+while [ answer != "0" ]  
+do 
+clear 
+echo "Select a submenu" 
+echo "  0  exit" 
+echo "  1  utilities: wacom, epson, clear SVI, rsync backups" 
+echo "  2  photos: remove headers with JHEAD" 
+echo "  3  " 
+read -p " ?" answer 
+    case $answer in 
+        0) break ;; 
+        1) bash ~/submenu1 
+        ;; 
+        2) bash ~/submenu2 
+        ;; 
+        3)  
+        ;; 
+        *) ;; 
+    esac  
+done 
+exit 0
+
+Note that this menu does not need to ask 'press return for menu' because that is done in the submenus. It can't be simpler than this. 
+-----------------------------------------------------------------------------------------------------------------------------------------
+function subopt1
+{
+   subopt1=""
+   while [ "$subopt1" != "x" ]
+   do
+      echo Sub Menu 1 Heading
+      echo Option A
+      echo Option B
+      echo x Back to Main Menu
+      read -p "Select sub option1" subopt1
+   done
+ }
+
+ function subopt2
+ {
+     subopt2=""
+     while [ "$subopt2" != "x" ]
+     do
+         echo Sub Menu 2 Heading
+         echo Option A
+         echo Option B
+         echo x Back to Main Menu
+         read -p "Select sub-option2" subopt2    
+     done
+ }
+
+ function mainopt
+ {
+    opt=""
+    while [ "$opt" != "x" ]
+    do
+        echo Menu Heading
+        echo Sub Menu 1
+        echo Sub Menu 2
+        read -p "Select Otion: " opt
+        if [ "$opt" = "1" ]; then
+             subopt1
+        elif [ "$opt" = "2" ]; then
+             subopt2
+        elif [ "$opt" = "x" ];then
+             break
+        fi
+   done
+}
+
+mainopt
+
